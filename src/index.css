@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 186 85% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 186 45% 92%;
+    --secondary-foreground: 186 85% 25%;
+
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 15% 50%;
+
+    --accent: 16 85% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 25% 88%;
+    --input: 210 25% 88%;
+    --ring: 186 85% 45%;
+
+    --success: 142 76% 45%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --radius: 0.75rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(186 85% 45%), hsl(186 75% 55%));
+    --gradient-accent: linear-gradient(135deg, hsl(16 85% 62%), hsl(16 75% 72%));
+    --gradient-hero: linear-gradient(180deg, hsl(210 40% 98%), hsl(186 45% 96%));
+
+    --shadow-soft: 0 2px 20px -2px hsl(186 85% 45% / 0.1);
+    --shadow-medium: 0 4px 30px -4px hsl(186 85% 45% / 0.15);
+    --shadow-strong: 0 10px 50px -10px hsl(186 85% 45% / 0.25);
+  }
+
+  .dark {
+    --background: 215 30% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 215 28% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 215 28% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 186 75% 55%;
+    --primary-foreground: 215 30% 10%;
+
+    --secondary: 215 25% 18%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 215 25% 18%;
+    --muted-foreground: 215 15% 65%;
+
+    --accent: 16 75% 58%;
+    --accent-foreground: 215 30% 10%;
+
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 215 25% 22%;
+    --input: 215 25% 22%;
+    --ring: 186 75% 55%;
+
+    --success: 142 70% 50%;
+    --success-foreground: 215 30% 10%;
+
+    --warning: 38 85% 55%;
+    --warning-foreground: 215 30% 10%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(186 75% 55%), hsl(186 65% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(16 75% 58%), hsl(16 65% 68%));
+    --gradient-hero: linear-gradient(180deg, hsl(215 30% 10%), hsl(186 45% 16%));
+
+    --shadow-soft: 0 2px 20px -2px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 4px 30px -4px hsl(0 0% 0% / 0.4);
+    --shadow-strong: 0 10px 50px -10px hsl(0 0% 0% / 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
