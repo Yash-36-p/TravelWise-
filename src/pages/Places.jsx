@@ -52,17 +52,33 @@ const places = [
     description: "Home to the iconic Taj Mahal, one of the world’s seven wonders, along with historic forts and Mughal architecture.",
     image: "https://imgcld.yatra.com/ytimages/image/upload/t_yt_blog_w_800_c_fill_g_auto_q_auto:good_f_jpg/v1534158986/AgraFort_1534158959.jpg",
   },
-
 ];
 
 export default function Places() {
   return (
-    <div className="min-h-screen bg-background py-10">
-      <h1 className="text-4xl font-bold text-center mb-20">Beautiful Places to Visit</h1>
+    <div className="min-h-screen bg-seasons py-10">
+      <h1 className="text-4xl font-bold text-center mb-8 animate-pulse transition-all duration-10">
+        Beautiful Places to Visit
+      </h1>
+
       <div className="container mx-auto grid sm:grid-cols-2 md:grid-cols-3 gap-6 px-4">
         {places.map((place, index) => (
-          <Card key={index} className="overflow-hidden shadow-md">
-            <img src={place.image} alt={place.name} className="w-full h-48 object-cover"/>
+          <Card
+            key={index}
+            className="
+              overflow-hidden shadow-md rounded-xl
+              transform transition-all duration-300
+              hover:scale-[1.05] hover:shadow-2xl cursor-pointer
+            "
+          >
+            <div className="overflow-hidden">
+              <img
+                src={place.image}
+                alt={place.name}
+                className="w-full h-48 object-cover transition-all duration-500 hover:scale-110"
+              />
+            </div>
+
             <div className="p-4">
               <h2 className="text-xl font-semibold mb-2">{place.name}</h2>
               <p className="text-muted-foreground">{place.description}</p>

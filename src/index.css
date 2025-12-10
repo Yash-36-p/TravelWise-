@@ -104,3 +104,49 @@
     @apply bg-background text-foreground;
   }
 }
+@layer utilities {
+  .bg-gradient-hero {
+    background: linear-gradient(to bottom right, #e0f7ff, #ffffff);
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  }
+
+  .shadow-soft {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .shadow-medium {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  }
+
+  .shadow-strong {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+} 
+
+/* Animated Background Slideshow */
+.bg-seasons {
+  background-size: cover;
+  background-position: center;
+  /* background-repeat: no-repeat; */
+  animation: seasons 20s infinite;
+}
+
+@keyframes seasons {
+  50%   { background-image: url("https://images.pexels.com/photos/688660/pexels-photo-688660.jpeg?cs=srgb&dl=pexels-simon73-688660.jpg&fm=jpg"); }   /* Winter */
+  /* 25%  { background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTa4Pxf0QqNO2RG5B5EEjRb6wpxBbbf75B9lP0G1Gr4Alct6i4cXNaJWws&s=10"); }   Spring */
+  /* 50%  { background-image: url("https://img.freepik.com/free-photo/beautiful-natural-landscape_23-2151839236.jpg?semt=ais_hybrid&w=740&q=80"); }   Autumn */
+  100% { background-image: url("https://images.pexels.com/photos/688660/pexels-photo-688660.jpeg?cs=srgb&dl=pexels-simon73-688660.jpg&fm=jpg"); }   /* Winter again */
+}
