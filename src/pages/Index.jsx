@@ -124,7 +124,7 @@ const Index = () => {
                   onClick={() => navigate("/dashboard")}
                   className="gap-2 shadow-medium hover:shadow-strong"
                 >
-                  Start Planning Now
+                  Start Planning Now  
                   <ArrowRight className="h-5 w-5" />
                 </Button>
               </div>
