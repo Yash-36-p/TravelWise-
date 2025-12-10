@@ -53,7 +53,7 @@ const Index = () => {
                   Get Started
                   <ArrowRight className="h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline">
+                <Button size="lg" variant="outline"  onClick={() => navigate("/places")}>
                   Learn More
                 </Button>
               </div>
