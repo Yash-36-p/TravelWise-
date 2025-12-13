@@ -9,6 +9,10 @@ import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
 import RequireAuth from "./components/RequireAuth";
 import Places from "./pages/Places.jsx";
+import History from "./pages/History";
+import Profile from "./pages/Profile.jsx";
+import Chatbot from "@/pages/Chatbot";
+
 
 const queryClient = new QueryClient();
 
@@ -23,6 +27,9 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
           <Route path="/places" element={<Places />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/chat" element={<Chatbot />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
