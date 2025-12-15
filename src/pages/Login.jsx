@@ -50,7 +50,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
           <div>
             <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", color: "#334155" }}>Full name</label>
-            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Priya Sharma" style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "14px" }} required />
+            <input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Shah Rukh Khan" style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "14px" }} required />
           </div>
 
           <div>
@@ -59,14 +59,14 @@ const Login = () => {
           </div>
 
           <div>
-            <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", color: "#334155" }}>Password (optional)</label>
-            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a passphrase (optional)" type="password" style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "14px" }} />
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", color: "#334155" }}>Password</label>
+            <input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a password" type="password" style={{ width: "100%", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "14px" }} />
           </div>
 
           <button type="submit" style={{ marginTop: "8px", padding: "10px 14px", background: "#0b3d91", color: "white", border: "none", borderRadius: "8px", fontSize: "15px", cursor: "pointer" }}>Sign In</button>
 
           <div style={{ textAlign: "center", marginTop: "10px", fontSize: "13px", color: "#64748b" }}>
-            <span>Or continue as a guest — the app will still save data locally.</span>
+            <span>Or continue as a guest</span>
           </div>
         </form>
       </div>
