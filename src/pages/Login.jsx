@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import trekk3 from "../assets/login1.mp4";
+import trekk3 from "../assets/login2.mp4";
 
 const Login = () => {
   const [isRegister, setIsRegister] = useState(false);
