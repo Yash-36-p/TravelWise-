@@ -205,7 +205,7 @@ const buttonStyle = {
         opacity: 0.8,
       }}
     >
-      Continue as guest •
+      {/* Continue as guest • */}
     </div>
   </div>
 </div>
