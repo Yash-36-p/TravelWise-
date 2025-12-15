@@ -8,7 +8,6 @@ import { toast } from "@/components/ui/use-toast";
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  /* ---------------- USER ---------------- */
   const user = JSON.parse(localStorage.getItem("travelwise-user") || "null");
 
   useEffect(() => {
@@ -60,29 +59,8 @@ export default function Dashboard() {
         }
       });
   }, [user?.email]);
-
-  /* ---------------- BUDGET CALCULATION (ONLY PLACE) ---------------- */
   
-
-  /* ---------------- ACTIONS ---------------- */
-  // const handleSetBudget = () => {
-  //   const val = Number(budgetInput);
-  //   if (!Number.isFinite(val) || val <= 0) return;
-
-  //   fetch("http://localhost:5000/api/budget", {
-  //     method: "POST",
-  //     headers: { "Content-Type": "application/json" },
-  //     body: JSON.stringify({
-  //       userEmail: user.email,
-  //       total: val,
-  //       spent: 0,
-  //       remaining: val,
-  //     }),
-  //   });
-
-  //   setBudget({ total: val, spent: 0, remaining: val });
-  //   setShowBudgetSetup(false);
-  // };
+ 
 
 const handleSetBudget = () => {
   const val = Number(budgetInput);
@@ -106,44 +84,6 @@ const handleSetBudget = () => {
       setShowBudgetSetup(false);
     });
 };
-
-
-
-
-//   const handleAddExpense = (data) => {
-//   const amount = Number(data.amount);
-//   if (!Number.isFinite(amount)) return;
-
-//   fetch("http://localhost:5000/api/expenses", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       ...data,
-//       amount,
-//       userEmail: user.email,
-//     }),
-//   })
-//     .then((res) => res.json())
-//     .then(async (saved) => {
-//       // 1️⃣ Update expenses list
-//       setExpenses((prev) => [...prev, saved]);
-
-//       // 2️⃣ Fetch UPDATED budget from MongoDB
-//       const budgetRes = await fetch(
-//         `http://localhost:5000/api/budget/${user.email}`
-//       );
-//       const updatedBudget = await budgetRes.json();
-
-//       // 🔍 LOG HERE (NOT IN BROWSER CONSOLE)
-//       console.log("UPDATED BUDGET FROM API:", updatedBudget);
-
-//       // 3️⃣ Update state
-//       if (updatedBudget?.total) {
-//         setBudget(updatedBudget);
-//       }
-//     })
-//     .catch((err) => console.error("ADD EXPENSE ERROR:", err));
-// };
 
 
 const handleAddExpense = (data) => {
@@ -180,12 +120,10 @@ const handleAddExpense = (data) => {
 
   const handleReset = async () => {
   try {
-    // Delete all expenses for user
     await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
       method: "DELETE",
     });
 
-    // Delete budget for user
     await fetch(`http://localhost:5000/api/budget/${user.email}`, {
       method: "DELETE",
     });
@@ -258,15 +196,11 @@ return (
         <source src="/src/assets/trekk3.mp4" type="video/mp4" />
       </video>
 
-      {/* 🌑 Dark Overlay */}
-      {/* <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" /> */}
       <div className="absolute inset-0 bg-black/35" />
 
 
-      {/* 🌟 DASHBOARD CONTENT */}
       <div className="relative z-10 min-h-screen flex">
 
-        {/* SIDEBAR */}
         <aside className="hidden md:flex flex-col w-64 bg-white/20 dark:bg-gray-800/40 backdrop-blur-xl border-r border-white/20 shadow-xl">
           <div className="p-6">
             <h1 className="text-2xl font-bold text-white">TravelWise</h1>
@@ -379,40 +313,7 @@ return (
               <ExpenseChart expenses={expenses} />
             </div>
 
-            {/* RECENT EXPENSES */}
-            {/* {expenses.length > 0 ? (
-              <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl space-y-3 text-white">
-                {expenses.map((e) => (
-                  <div
-                    key={e.id}
-                    className="p-4 rounded-xl bg-white/10 flex justify-between"
-                  >
-                    <div>
-                      <p className="font-semibold">{e.title}</p>
-                      <p className="text-sm text-gray-200">
-                        {e.category} •{" "}
-                        {new Date(e.date).toLocaleDateString("en-IN")}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold">₹{e.amount}</p>
-                      <button
-                        onClick={() => handleDeleteExpense(e.id)}
-                        className="mt-2 px-2 py-1 bg-red-500 text-white text-xs rounded"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-gray-200 text-center">
-                No expenses yet. Add one to get started.
-              </div>
-            )} */}
-
-          {/* RECENT EXPENSES */}
+            
 {expenses.length > 0 ? (
   <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl space-y-3 text-white">
     {expenses.map((e) => (
