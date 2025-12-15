@@ -1,56 +1,104 @@
-// const Expense = require("../models/Expense");
 
-// exports.getExpenses = async (req, res) => {
-//   const { userId } = req.query;
-//   if (!userId) return res.status(400).json({ error: "userId required" });
+// // const Expense = require("../models/expense");
+// // const Budget = require("../models/Budget");
+// import Expense from "../models/expense.js";
+// import Budget from "../models/Budget.js";
 
-//   const expenses = await Expense.find({ user: userId }).sort({ date: -1 });
-//   res.json(expenses);
-// };
 
 // exports.addExpense = async (req, res) => {
-//   const { userId, title, amount, category, date, description } = req.body;
-//   if (!userId) return res.status(400).json({ error: "userId required" });
+//   try {
+//     // ✅ FORCE amount to number BEFORE saving
+//     const expense = await Expense.create({
+//       ...req.body,
+//       amount: Number(req.body.amount),
+//     });
 
-//   const newExpense = await Expense.create({ user: userId, title, amount, category, date, description });
-//   res.status(201).json(newExpense);
+//     // ✅ Get all expenses for user
+//     const expenses = await Expense.find({
+//       userEmail: req.body.userEmail,
+//     });
+
+//     // ✅ SAFE numeric sum
+//     const spent = expenses.reduce(
+//       (sum, e) => sum + Number(e.amount || 0),
+//       0
+//     );
+
+//     // ✅ Update budget
+//     const budget = await Budget.findOne({
+//       userEmail: req.body.userEmail,
+//     });
+
+//     if (budget) {
+//       budget.spent = spent;
+//       budget.remaining = Math.max(budget.total - spent, 0);
+//       await budget.save();
+//     }
+
+//     res.json(expense);
+//   } catch (err) {
+//     console.error("Add Expense Error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
 // };
 
-// exports.deleteExpense = async (req, res) => {
-//   const { id } = req.params;
-//   await Expense.findByIdAndDelete(id);
-//   res.json({ success: true });
+// exports.getExpenses = async (req, res) => {
+//   try {
+//     const expenses = await Expense.find({
+//       userEmail: req.params.email,
+//     });
+//     res.json(expenses);
+//   } catch (err) {
+//     console.error("Get Expense Error:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
 // };
 
-const Expense = require("../models/Expense");
+const Expense = require("../models/expense");
+const Budget = require("../models/Budget");
 
-// GET all expenses for a user
-exports.getExpenses = async (req, res) => {
-  try {
-    const expenses = await Expense.find({ userId: req.query.userId });
-    res.json(expenses);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// ADD new expense
 exports.addExpense = async (req, res) => {
   try {
-    const expense = await Expense.create(req.body);
+    const amount = Number(req.body.amount);
+
+    const expense = await Expense.create({
+      ...req.body,
+      amount,
+    });
+
+    const expenses = await Expense.find({
+      userEmail: req.body.userEmail,
+    });
+
+    const spent = expenses.reduce(
+      (sum, e) => sum + Number(e.amount),
+      0
+    );
+
+    const budget = await Budget.findOne({
+      userEmail: req.body.userEmail,
+    });
+
+    if (budget) {
+      budget.spent = spent;
+      budget.remaining = Math.max(budget.total - spent, 0);
+      await budget.save();
+    }
+
     res.json(expense);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// DELETE expense
-exports.deleteExpense = async (req, res) => {
+exports.getExpenses = async (req, res) => {
   try {
-    await Expense.findByIdAndDelete(req.params.id);
-    res.json({ message: "Expense deleted" });
+    const expenses = await Expense.find({
+      userEmail: req.params.email,
+    });
+    res.json(expenses);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
-

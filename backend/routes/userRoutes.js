@@ -1,20 +1,39 @@
-// const express = require("express");
-// const { getProfile, updateProfile } = require("../controllers/userController");
-// const router = express.Router();
 
-// // GET /api/user/profile?userId=...
-// router.get("/profile", getProfile);
-// // PUT /api/user/profile
-// router.put("/profile", updateProfile);
+// // const express = require("express");
+// // const router = express.Router();
+
+// // // TEST ROUTE
+// // router.get("/test", (req, res) => {
+// //   res.send("User API working 🚀");
+// // });
+
+// // module.exports = router;
+
+// const express = require("express");
+// const router = express.Router();
+// const { loginUser } = require("../controllers/userController");
+
+// router.post("/login", loginUser);
 
 // module.exports = router;
 
 const express = require("express");
 const router = express.Router();
+const User = require("../models/User");
 
-// TEST ROUTE
-router.get("/test", (req, res) => {
-  res.send("User API working 🚀");
+// Create or get user
+router.post("/login", async (req, res) => {
+  const { name, email } = req.body;
+
+  if (!email) return res.status(400).json({ error: "Email required" });
+
+  let user = await User.findOne({ email });
+
+  if (!user) {
+    user = await User.create({ name, email });
+  }
+
+  res.json(user);
 });
 
 module.exports = router;

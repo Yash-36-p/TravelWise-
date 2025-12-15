@@ -7,20 +7,37 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim() || !email.trim()) {
-      alert("Please enter your name and email to continue.");
-      return;
-    }
+  
 
-    // Simple client-side "login" — store a user object in localStorage
-    const user = { name: name.trim(), email: email.trim() };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!name.trim() || !email.trim()) {
+    alert("Please enter your name and email.");
+    return;
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/api/user/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: name.trim(),
+        email: email.trim(),
+      }),
+    });
+
+    const user = await res.json();
+
+    // Save MongoDB user
     localStorage.setItem("travelwise-user", JSON.stringify(user));
 
-    // Redirect to dashboard
     navigate("/dashboard");
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Login failed");
+  }
+};
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#0f172a 0%, #0b3d91 100%)", padding: "40px", boxSizing: "border-box" }}>

@@ -6,138 +6,213 @@ import { HistorySection } from "@/components/Dashboard/HistorySection";
 import { toast } from "@/components/ui/use-toast";
 
 export default function Dashboard() {
-  const [darkMode, setDarkMode] = useState(false);
-
-  const [expenses, setExpenses] = useState<Expense[]>([]);
-
-  const [budget, setBudget] = useState<Budget>(() => {
-  const saved = localStorage.getItem("travelwise-budget");
-  return saved
-    ? JSON.parse(saved)
-    : { total: 5000, spent: 0, remaining: 5000 };
-});
-
-
-  const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
-  const [showBudgetSetup, setShowBudgetSetup] = useState(true);
-  const [budgetSetupComplete, setBudgetSetupComplete] = useState(false);
-  const [budgetInput, setBudgetInput] = useState("5000");
-
   const navigate = useNavigate();
 
-  // Track which alerts have already been shown
+  /* ---------------- USER ---------------- */
+  const user = JSON.parse(localStorage.getItem("travelwise-user") || "null");
+
+  useEffect(() => {
+    if (!user) navigate("/login");
+  }, [user, navigate]);
+
+  if (!user) return null;
+
+  /* ---------------- STATE ---------------- */
+  const [expenses, setExpenses] = useState([]);
+  const [budget, setBudget] = useState({
+    total: 0,
+    spent: 0,
+    remaining: 0,
+  });
+
+   const [darkMode, setDarkMode] = useState(false);
+
+  const [showBudgetSetup, setShowBudgetSetup] = useState(true);
+  const [budgetInput, setBudgetInput] = useState("");
+  const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
+
   const shownAlerts = useRef({
     fifty: false,
     seventyFive: false,
     ninety: false,
   });
 
-  // Load saved data
+  /* ---------------- FETCH FROM MONGODB ---------------- */
   useEffect(() => {
-    const savedExpenses = localStorage.getItem("travelwise-expenses");
-    const savedBudget = localStorage.getItem("travelwise-budget");
-    const done = localStorage.getItem("travelwise-budget-setup");
+    if (!user?.email) return;
 
-    if (savedExpenses) setExpenses(JSON.parse(savedExpenses));
+    // Fetch expenses
+    fetch(`http://localhost:5000/api/expenses/${user.email}`)
+      .then((res) => res.json())
+      .then((data) => setExpenses(Array.isArray(data) ? data : []));
 
-    if (done) {
-      setBudgetSetupComplete(true);
+    // Fetch budget
+    fetch(`http://localhost:5000/api/budget/${user.email}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.total > 0) {
+          setBudget({
+            total: Number(data.total),
+            spent: Number(data.spent || 0),
+            remaining: Number(data.remaining || data.total),
+          });
+          setShowBudgetSetup(false);
+        }
+      });
+  }, [user?.email]);
+
+  /* ---------------- BUDGET CALCULATION (ONLY PLACE) ---------------- */
+  
+
+  /* ---------------- ACTIONS ---------------- */
+  // const handleSetBudget = () => {
+  //   const val = Number(budgetInput);
+  //   if (!Number.isFinite(val) || val <= 0) return;
+
+  //   fetch("http://localhost:5000/api/budget", {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify({
+  //       userEmail: user.email,
+  //       total: val,
+  //       spent: 0,
+  //       remaining: val,
+  //     }),
+  //   });
+
+  //   setBudget({ total: val, spent: 0, remaining: val });
+  //   setShowBudgetSetup(false);
+  // };
+
+const handleSetBudget = () => {
+  const val = Number(budgetInput);
+  if (!Number.isFinite(val) || val <= 0) return;
+
+  fetch("http://localhost:5000/api/budget", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userEmail: user.email,
+      total: val,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      setBudget({
+        total: data.total,
+        spent: data.spent,
+        remaining: data.remaining,
+      });
       setShowBudgetSetup(false);
-      if (savedBudget) setBudget(JSON.parse(savedBudget));
-    }
-  }, []);
+    });
+};
 
-  // Budget calculation + Alerts
-  useEffect(() => {
-    const totalSpent = expenses.reduce((sum, e) => sum + e.amount, 0);
-    const updated = {
-      ...budget,
-      spent: totalSpent,
-      remaining: budget.total - totalSpent,
-    };
 
-    setBudget(updated);
 
-    if (budgetSetupComplete) {
-      localStorage.setItem("travelwise-budget", JSON.stringify(updated));
-    }
 
-    localStorage.setItem("travelwise-expenses", JSON.stringify(expenses));
+//   const handleAddExpense = (data) => {
+//   const amount = Number(data.amount);
+//   if (!Number.isFinite(amount)) return;
 
-    // ---- Budget Alert Logic (only ONCE per threshold) ----
-    const percent = (totalSpent / budget.total) * 100;
+//   fetch("http://localhost:5000/api/expenses", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       ...data,
+//       amount,
+//       userEmail: user.email,
+//     }),
+//   })
+//     .then((res) => res.json())
+//     .then(async (saved) => {
+//       // 1️⃣ Update expenses list
+//       setExpenses((prev) => [...prev, saved]);
 
-    if (!shownAlerts.current.fifty && percent >= 50) {
-      shownAlerts.current.fifty = true;
-      toast({
-        title: "🔔 Budget Notice",
-        description: "You've used 50% of your budget.",
+//       // 2️⃣ Fetch UPDATED budget from MongoDB
+//       const budgetRes = await fetch(
+//         `http://localhost:5000/api/budget/${user.email}`
+//       );
+//       const updatedBudget = await budgetRes.json();
+
+//       // 🔍 LOG HERE (NOT IN BROWSER CONSOLE)
+//       console.log("UPDATED BUDGET FROM API:", updatedBudget);
+
+//       // 3️⃣ Update state
+//       if (updatedBudget?.total) {
+//         setBudget(updatedBudget);
+//       }
+//     })
+//     .catch((err) => console.error("ADD EXPENSE ERROR:", err));
+// };
+
+
+const handleAddExpense = (data) => {
+  const amount = Number(data.amount);
+  if (!Number.isFinite(amount)) return;
+
+  fetch("http://localhost:5000/api/expenses", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...data,
+      amount,
+      userEmail: user.email,
+    }),
+  })
+    .then((res) => res.json())
+    .then(async (saved) => {
+      setExpenses((prev) => [...prev, saved]);
+
+      const budgetRes = await fetch(
+        `http://localhost:5000/api/budget/${user.email}`
+      );
+      const updatedBudget = await budgetRes.json();
+
+      setBudget({
+        total: updatedBudget.total,
+        spent: updatedBudget.spent,
+        remaining: updatedBudget.remaining,
       });
-    }
+    });
+};
 
-    if (!shownAlerts.current.seventyFive && percent >= 75) {
-      shownAlerts.current.seventyFive = true;
-      toast({
-        title: "⚠️ Warning!",
-        description: "You've crossed 75% of your budget.",
-      });
-    }
 
-    if (!shownAlerts.current.ninety && percent >= 90) {
-      shownAlerts.current.ninety = true;
-      toast({
-        title: "🚨 Critical Budget Warning!",
-        description: "You've used more than 90% of your budget!",
-        variant: "destructive",
-      });
-    }
 
-  }, [expenses, budgetSetupComplete]);
+  const handleReset = async () => {
+  try {
+    // Delete all expenses for user
+    await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
+      method: "DELETE",
+    });
 
-  // Add Expense Handler
-  const handleAddExpense = (data: Omit<Expense, "id">) => {
-    setExpenses([...expenses, { ...data, id: crypto.randomUUID() }]);
-  };
-
-  // Delete Expense
-  const handleDeleteExpense = (id: string) => {
-    setExpenses(expenses.filter((e) => e.id !== id));
-  };
-
-  // Save Budget Setup
-  const handleSetBudget = () => {
-    const val = parseFloat(budgetInput);
-    if (val > 0) {
-      const spent = expenses.reduce((sum, e) => sum + e.amount, 0);
-      const newBudget = { total: val, spent, remaining: val - spent };
-
-      setBudget(newBudget);
-      setShowBudgetSetup(false);
-      setBudgetSetupComplete(true);
-
-      localStorage.setItem("travelwise-budget", JSON.stringify(newBudget));
-      localStorage.setItem("travelwise-budget-setup", "true");
-    }
-  };
-
-  // Reset budget + expenses
-  const handleReset = () => {
-    const history = JSON.parse(localStorage.getItem("travelwise-history") || "[]");
-    history.push({ timestamp: Date.now(), expenses, budget });
-    localStorage.setItem("travelwise-history", JSON.stringify(history));
-
-    localStorage.removeItem("travelwise-budget");
-    localStorage.removeItem("travelwise-budget-setup");
-    localStorage.removeItem("travelwise-expenses");
+    // Delete budget for user
+    await fetch(`http://localhost:5000/api/budget/${user.email}`, {
+      method: "DELETE",
+    });
 
     setExpenses([]);
-    setBudget({ total: 5000, spent: 0, remaining: 5000 });
-    setBudgetSetupComplete(false);
+    setBudget({ total: 0, spent: 0, remaining: 0 });
     setShowBudgetSetup(true);
-    setBudgetInput("5000");
 
-    shownAlerts.current = { fifty: false, seventyFive: false, ninety: false }; // reset alerts
+    shownAlerts.current = {
+      fifty: false,
+      seventyFive: false,
+      ninety: false,
+    };
+  } catch (err) {
+    console.error("Reset failed", err);
+  }
+};
+
+
+  const handleDeleteExpense = (id) => {
+    fetch(`http://localhost:5000/api/expenses/${id}`, {
+      method: "DELETE",
+    }).then(() => {
+      setExpenses((prev) => prev.filter((e) => e._id !== id));
+    });
   };
+
 
   // ---------------- UI START ----------------
 
@@ -305,7 +380,7 @@ return (
             </div>
 
             {/* RECENT EXPENSES */}
-            {expenses.length > 0 ? (
+            {/* {expenses.length > 0 ? (
               <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl space-y-3 text-white">
                 {expenses.map((e) => (
                   <div
@@ -335,7 +410,43 @@ return (
               <div className="text-gray-200 text-center">
                 No expenses yet. Add one to get started.
               </div>
-            )}
+            )} */}
+
+          {/* RECENT EXPENSES */}
+{expenses.length > 0 ? (
+  <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl space-y-3 text-white">
+    {expenses.map((e) => (
+      <div
+        key={e._id}   // ✅ FIXED: MongoDB uses _id
+        className="p-4 rounded-xl bg-white/10 flex justify-between"
+      >
+        <div>
+          <p className="font-semibold">{e.title}</p>
+          <p className="text-sm text-gray-200">
+            {e.category} •{" "}
+            {new Date(e.date).toLocaleDateString("en-IN")}
+          </p>
+        </div>
+
+        <div className="text-right">
+          <p className="font-bold">₹{e.amount}</p>
+          <button
+            onClick={() => handleDeleteExpense(e._id)} // ✅ FIXED
+            className="mt-2 px-2 py-1 bg-red-500 text-white text-xs rounded"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+) : (
+  <div className="text-gray-200 text-center">
+    No expenses yet. Add one to get started.
+  </div>
+)}
+
+
           </main>
         </div>
       </div>
