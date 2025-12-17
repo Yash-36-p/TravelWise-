@@ -24,6 +24,9 @@ export default function Dashboard() {
     remaining: 0,
   });
 
+
+const [isResetting, setIsResetting] = useState(false);
+
    const [darkMode, setDarkMode] = useState(false);
 
   const [showBudgetSetup, setShowBudgetSetup] = useState(true);
@@ -37,6 +40,7 @@ export default function Dashboard() {
   });
 
   /* ---------------- FETCH FROM MONGODB ---------------- */
+
   useEffect(() => {
     if (!user?.email) return;
 
@@ -59,6 +63,53 @@ export default function Dashboard() {
         }
       });
   }, [user?.email]);
+
+
+  useEffect(() => {
+  if (isResetting) return;          // 🛑 VERY IMPORTANT
+  if (!budget.total) return;
+
+  if (!expenses.length) {
+    setBudget((prev) => ({
+      ...prev,
+      spent: 0,
+      remaining: prev.total,
+    }));
+    return;
+  }
+
+  const totalSpent = expenses.reduce((sum, e) => {
+    const amt = Number(e.amount);
+    return Number.isFinite(amt) ? sum + amt : sum;
+  }, 0);
+
+  setBudget((prev) => ({
+    ...prev,
+    spent: totalSpent,
+    remaining: Math.max(prev.total - totalSpent, 0),
+  }));
+
+  const percent = (totalSpent / budget.total) * 100;
+
+  if (!shownAlerts.current.fifty && percent >= 50) {
+    shownAlerts.current.fifty = true;
+    toast({ title: "🔔 50% of budget used" });
+  }
+
+  if (!shownAlerts.current.seventyFive && percent >= 75) {
+    shownAlerts.current.seventyFive = true;
+    toast({ title: "⚠️ 75% budget warning" });
+  }
+
+  if (!shownAlerts.current.ninety && percent >= 90) {
+    shownAlerts.current.ninety = true;
+    toast({
+      title: "🚨 90% Budget Used",
+      variant: "destructive",
+    });
+  }
+}, [expenses, budget.total, isResetting]);
+
   
  
 
@@ -118,8 +169,35 @@ const handleAddExpense = (data) => {
 
 
 
-  const handleReset = async () => {
+//   const handleReset = async () => {
+//   try {
+//     await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
+//       method: "DELETE",
+//     });
+
+//     await fetch(`http://localhost:5000/api/budget/${user.email}`, {
+//       method: "DELETE",
+//     });
+
+//     setExpenses([]);
+//     setBudget({ total: 0, spent: 0, remaining: 0 });
+//     setShowBudgetSetup(true);
+
+//     shownAlerts.current = {
+//       fifty: false,
+//       seventyFive: false,
+//       ninety: false,
+//     };
+//   } catch (err) {
+//     console.error("Reset failed", err);
+//   }
+// };
+
+
+const handleReset = async () => {
   try {
+    setIsResetting(true); // 🔒 lock calculations
+
     await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
       method: "DELETE",
     });
@@ -139,6 +217,8 @@ const handleAddExpense = (data) => {
     };
   } catch (err) {
     console.error("Reset failed", err);
+  } finally {
+    setTimeout(() => setIsResetting(false), 0);
   }
 };
 
