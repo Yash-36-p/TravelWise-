@@ -61,40 +61,6 @@ export default function Chatbot() {
   );
 }
 
-// function getBotReply(message) {
-//   const text = message.toLowerCase();
-
-//   if (text.includes("goa") && text.includes("3") && text.includes("10000")) {
-//     return {
-//       sender: "bot",
-//       text:
-//         "🌴 **3-Day Goa Trip (₹10,000 Budget)**\n\n" +
-//         "🏨 Stay: ₹3,000 (Hostel / Budget hotel)\n" +
-//         "🍴 Food: ₹2,500 (Local cafes & street food)\n" +
-//         "🛵 Transport: ₹2,000 (Bike rental + buses)\n" +
-//         "🏖 Activities: ₹2,000 (Beaches, forts, free parties)\n" +
-//         "💡 Tip: Avoid taxis, rent a bike for savings!"
-//     };
-//   }
-
-//   if (text.includes("manali")) {
-//     return {
-//       sender: "bot",
-//       text:
-//         "🏔 **Manali Budget Trip Suggestion**\n\n" +
-//         "Stay: ₹2,500\nFood: ₹2,000\nTransport: ₹3,000\nActivities: ₹2,000"
-//     };
-//   }
-
-//   return {
-//     sender: "bot",
-//     text:
-//       "🤔 I can help with budget planning like:\n" +
-//       "• Plan a Goa trip under ₹10,000\n" +
-//       "• 2-day Manali budget plan\n\nTry asking!"
-//   };
-// }
-
 function getBotReply(message) {
   const text = message.toLowerCase();
 

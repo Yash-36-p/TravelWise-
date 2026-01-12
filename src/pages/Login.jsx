@@ -19,8 +19,11 @@ const handleSubmit = async (e) => {
 
   try {
     const url = isRegister
-      ? "http://localhost:5000/api/user/register"
-      : "http://localhost:5000/api/user/login";
+      // ? "http://localhost:5000/api/user/register"
+      // : "http://localhost:5000/api/user/login";
+  ? `${import.meta.env.VITE_API_URL}/api/user/register`
+  : `${import.meta.env.VITE_API_URL}/api/user/login`;
+
 
     const res = await fetch(url, {
       method: "POST",

@@ -41,28 +41,55 @@ const [isResetting, setIsResetting] = useState(false);
 
   /* ---------------- FETCH FROM MONGODB ---------------- */
 
+  // useEffect(() => {
+  //   if (!user?.email) return;
+
+  //   // Fetch expenses
+  //   fetch(`http://localhost:5000/api/expenses/${user.email}`)
+  //     .then((res) => res.json())
+  //     .then((data) => setExpenses(Array.isArray(data) ? data : []));
+
+  //   // Fetch budget
+  //   fetch(`http://localhost:5000/api/budget/${user.email}`)
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       if (data?.total > 0) {
+  //         setBudget({
+  //           total: Number(data.total),
+  //           spent: Number(data.spent || 0),
+  //           remaining: Number(data.remaining || data.total),
+  //         });
+  //         setShowBudgetSetup(false);
+  //       }
+  //     });
+  // }, [user?.email]);
+
+
   useEffect(() => {
-    if (!user?.email) return;
+  if (!user?.email) return;
 
-    // Fetch expenses
-    fetch(`http://localhost:5000/api/expenses/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => setExpenses(Array.isArray(data) ? data : []));
+  const API = import.meta.env.VITE_API_URL;
 
-    // Fetch budget
-    fetch(`http://localhost:5000/api/budget/${user.email}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.total > 0) {
-          setBudget({
-            total: Number(data.total),
-            spent: Number(data.spent || 0),
-            remaining: Number(data.remaining || data.total),
-          });
-          setShowBudgetSetup(false);
-        }
-      });
-  }, [user?.email]);
+  // Fetch expenses
+  fetch(`${API}/api/expenses/${user.email}`)
+    .then((res) => res.json())
+    .then((data) => setExpenses(Array.isArray(data) ? data : []));
+
+  // Fetch budget
+  fetch(`${API}/api/budget/${user.email}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data?.total > 0) {
+        setBudget({
+          total: Number(data.total),
+          spent: Number(data.spent || 0),
+          remaining: Number(data.remaining || data.total),
+        });
+        setShowBudgetSetup(false);
+      }
+    });
+}, [user?.email]);
+
 
 
   useEffect(() => {
@@ -111,13 +138,104 @@ const [isResetting, setIsResetting] = useState(false);
 }, [expenses, budget.total, isResetting]);
 
   
- 
+// const handleSetBudget = () => {
+//   const val = Number(budgetInput);
+//   if (!Number.isFinite(val) || val <= 0) return;
+
+//   fetch("http://localhost:5000/api/budget", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       userEmail: user.email,
+//       total: val,
+//     }),
+//   })
+//     .then((res) => res.json())
+//     .then((data) => {
+//       setBudget({
+//         total: data.total,
+//         spent: data.spent,
+//         remaining: data.remaining,
+//       });
+//       setShowBudgetSetup(false);
+//     });
+// };
+
+
+// const handleAddExpense = (data) => {
+//   const amount = Number(data.amount);
+//   if (!Number.isFinite(amount)) return;
+
+//   fetch("http://localhost:5000/api/expenses", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       ...data,
+//       amount,
+//       userEmail: user.email,
+//     }),
+//   })
+//     .then((res) => res.json())
+//     .then(async (saved) => {
+//       setExpenses((prev) => [...prev, saved]);
+
+//       const budgetRes = await fetch(
+//         `http://localhost:5000/api/budget/${user.email}`
+//       );
+//       const updatedBudget = await budgetRes.json();
+
+//       setBudget({
+//         total: updatedBudget.total,
+//         spent: updatedBudget.spent,
+//         remaining: updatedBudget.remaining,
+//       });
+//     });
+// };
+
+
+
+// const handleReset = async () => {
+//   try {
+//     setIsResetting(true); 
+
+//     await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
+//       method: "DELETE",
+//     });
+
+//     await fetch(`http://localhost:5000/api/budget/${user.email}`, {
+//       method: "DELETE",
+//     });
+
+//     setExpenses([]);
+//     setBudget({ total: 0, spent: 0, remaining: 0 });
+//     setShowBudgetSetup(true);
+
+//     shownAlerts.current = {
+//       fifty: false,
+//       seventyFive: false,
+//       ninety: false,
+//     };
+//   } catch (err) {
+//     console.error("Reset failed", err);
+//   } finally {
+//     setTimeout(() => setIsResetting(false), 0);
+//   }
+// };
+
+
+//   const handleDeleteExpense = (id) => {
+//     fetch(`http://localhost:5000/api/expenses/${id}`, {
+//       method: "DELETE",
+//     }).then(() => {
+//       setExpenses((prev) => prev.filter((e) => e._id !== id));
+//     });
+//   };
 
 const handleSetBudget = () => {
   const val = Number(budgetInput);
   if (!Number.isFinite(val) || val <= 0) return;
 
-  fetch("http://localhost:5000/api/budget", {
+  fetch(`${API}/api/budget`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -141,7 +259,7 @@ const handleAddExpense = (data) => {
   const amount = Number(data.amount);
   if (!Number.isFinite(amount)) return;
 
-  fetch("http://localhost:5000/api/expenses", {
+  fetch(`${API}/api/expenses`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -154,9 +272,7 @@ const handleAddExpense = (data) => {
     .then(async (saved) => {
       setExpenses((prev) => [...prev, saved]);
 
-      const budgetRes = await fetch(
-        `http://localhost:5000/api/budget/${user.email}`
-      );
+      const budgetRes = await fetch(`${API}/api/budget/${user.email}`);
       const updatedBudget = await budgetRes.json();
 
       setBudget({
@@ -168,16 +284,15 @@ const handleAddExpense = (data) => {
 };
 
 
-
 const handleReset = async () => {
   try {
-    setIsResetting(true); 
+    setIsResetting(true);
 
-    await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
+    await fetch(`${API}/api/expenses/user/${user.email}`, {
       method: "DELETE",
     });
 
-    await fetch(`http://localhost:5000/api/budget/${user.email}`, {
+    await fetch(`${API}/api/budget/${user.email}`, {
       method: "DELETE",
     });
 
@@ -198,14 +313,13 @@ const handleReset = async () => {
 };
 
 
-  const handleDeleteExpense = (id) => {
-    fetch(`http://localhost:5000/api/expenses/${id}`, {
-      method: "DELETE",
-    }).then(() => {
-      setExpenses((prev) => prev.filter((e) => e._id !== id));
-    });
-  };
-
+const handleDeleteExpense = (id) => {
+  fetch(`${API}/api/expenses/${id}`, {
+    method: "DELETE",
+  }).then(() => {
+    setExpenses((prev) => prev.filter((e) => e._id !== id));
+  });
+};
 
 
   if (showBudgetSetup) {
