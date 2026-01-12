@@ -4,7 +4,7 @@ import { Expense, Budget } from "@/types/expense";
 import { ExpenseChart } from "@/components/Dashboard/ExpenseChart";
 import { HistorySection } from "@/components/Dashboard/HistorySection";
 import { toast } from "@/components/ui/use-toast";
-import bgVideo from "../assets/trekk3.mp4";
+import bgVideo from "../assets/login2.mp4";
 
 
 export default function Dashboard() {
@@ -246,7 +246,7 @@ return (
         playsInline
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       >
-        <source src="/src/assets/trekk3.mp4" type="video/mp4" />
+        <source src="/src/assets/login2.mp4" type="video/mp4" />
       </video>
 
       <div className="absolute inset-0 bg-black/35" />
