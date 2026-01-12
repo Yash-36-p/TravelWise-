@@ -64,11 +64,13 @@ const [isResetting, setIsResetting] = useState(false);
   //     });
   // }, [user?.email]);
 
+    const API = import.meta.env.VITE_API_URL;
+
 
   useEffect(() => {
   if (!user?.email) return;
 
-  const API = import.meta.env.VITE_API_URL;
+  // const API = import.meta.env.VITE_API_URL;
 
   // Fetch expenses
   fetch(`${API}/api/expenses/${user.email}`)
