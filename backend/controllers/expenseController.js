@@ -48,7 +48,7 @@
 // };
 
 
-const Expense = require("../models/expense");
+const Expense = require("../models/Expense");
 const Budget = require("../models/Budget");
 
 exports.addExpense = async (req, res) => {
