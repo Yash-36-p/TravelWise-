@@ -169,34 +169,9 @@ const handleAddExpense = (data) => {
 
 
 
-//   const handleReset = async () => {
-//   try {
-//     await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
-//       method: "DELETE",
-//     });
-
-//     await fetch(`http://localhost:5000/api/budget/${user.email}`, {
-//       method: "DELETE",
-//     });
-
-//     setExpenses([]);
-//     setBudget({ total: 0, spent: 0, remaining: 0 });
-//     setShowBudgetSetup(true);
-
-//     shownAlerts.current = {
-//       fifty: false,
-//       seventyFive: false,
-//       ninety: false,
-//     };
-//   } catch (err) {
-//     console.error("Reset failed", err);
-//   }
-// };
-
-
 const handleReset = async () => {
   try {
-    setIsResetting(true); // 🔒 lock calculations
+    setIsResetting(true); 
 
     await fetch(`http://localhost:5000/api/expenses/user/${user.email}`, {
       method: "DELETE",
@@ -232,7 +207,6 @@ const handleReset = async () => {
   };
 
 
-  // ---------------- UI START ----------------
 
   if (showBudgetSetup) {
     return (
@@ -262,10 +236,8 @@ const handleReset = async () => {
 
 return (
   <div className={darkMode ? "dark" : ""}>
-    {/* VIDEO BACKGROUND CONTAINER */}
     <div className="relative min-h-screen overflow-hidden">
 
-      {/* 🎥 Trekking Video Background */}
       <video
         autoPlay
         loop
@@ -357,7 +329,6 @@ return (
             </div>
           </header>
 
-          {/* CONTENT */}
           <main className="p-6 space-y-6 overflow-y-auto flex-1">
 
             {/* BUDGET SUMMARY */}
@@ -385,7 +356,6 @@ return (
               </div>
             </div>
 
-            {/* EXPENSE CHART */}
             <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl">
               <h3 className="text-lg font-semibold text-white mb-4">
                 Expense Charts
@@ -398,7 +368,7 @@ return (
   <div className="bg-white/20 backdrop-blur-xl border border-white/20 p-6 rounded-2xl shadow-xl space-y-3 text-white">
     {expenses.map((e) => (
       <div
-        key={e._id}   // ✅ FIXED: MongoDB uses _id
+        key={e._id} 
         className="p-4 rounded-xl bg-white/10 flex justify-between"
       >
         <div>
@@ -433,10 +403,8 @@ return (
       </div>
     </div>
 
-    {/* ADD EXPENSE MODAL (UNCHANGED) */}
     {isAddExpenseOpen && (
   <>
-    {/* Backdrop */}
     <div
       className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
       onClick={() => setIsAddExpenseOpen(false)}
