@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import trekk3 from "../assets/Login2.mp4";
+import trekk3 from "../assets/login2.mp4";
 
 const Login = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -21,6 +21,7 @@ const handleSubmit = async (e) => {
     const url = isRegister
       // ? "http://localhost:5000/api/user/register"
       // : "http://localhost:5000/api/user/login";
+
   ? `${import.meta.env.VITE_API_URL}/api/user/register`
   : `${import.meta.env.VITE_API_URL}/api/user/login`;
 
